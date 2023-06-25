@@ -1,0 +1,10 @@
+name = "my-app"
+compatibility_date = "2023-01-01"
+
+
+workers_dev = true
+
+[[r2_buckets]]
+binding = 'MY_BUCKET' # <~ valid JavaScript variable name
+bucket_name = 'start'
+preview_bucket_name =  "start_dev"
