@@ -1,0 +1,6 @@
+{
+  "databaseURL": "https://satish-s-workspace-6midd6.us-east-1.xata.sh/db/jetdrive",
+  "codegen": {
+    "output": "src/xata.ts"
+  }
+}
