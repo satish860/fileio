@@ -6,19 +6,31 @@ type Bindings = {
   XATA_API_KEY: string
 }
 
+const app = new Hono<{ Bindings: Bindings }>();
 
-const app = new Hono<{ Bindings: Bindings }>()
+app.use("/api/*", async (c, next) => {
+  const xata = getXataClient(c.env.XATA_API_KEY);
+  const apikey = c.req.headers.get('x-api-key');
+  if (!apikey) return c.text('API Key is required!', 401)
+  var exists = await xata.db.ApiKey.filter({
+    ApiKey: { $is: c.req.headers.get('x-api-key') },
+  }).getFirst();
+  if (!exists) return c.text('Invalid API Key!', 401)
+  return next();
+});
+
+
 
 app.get('/', (c) => c.text('Hello Hono!'))
 
-app.put('/upload/:key', async (c, next) => {
+app.put('/api/upload/:key', async (c, next) => {
   const key = c.req.param('key')
   if (!key) return c.text('Key is required!', 400)
   await c.env.MY_BUCKET.put(key, c.req.body)
   return c.text(`Put ${key} successfully!`)
 })
 
-app.get('/download/:key', async (c, next) => {
+app.get('/api/download/:key', async (c, next) => {
   const key = c.req.param('key')
   if (!key) return c.text('Key is required!', 400)
   const data = await c.env.MY_BUCKET.get(key)
